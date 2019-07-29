@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Gedmo\Sluggable\Util\Urlizer;
+use App\Service\UploaderHelper;
 
 class ArticleAdminController extends BaseController
 {
@@ -27,6 +28,13 @@ class ArticleAdminController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var Article $article */
             $article = $form->getData();
+
+            /** @var UploadedFile $uploadedFile */
+            $uploadedFile = $form['imageFile']->getData();
+            if ($uploadedFile) {
+                $newFilename = $uploaderHelper->uploadArticleImage($uploadedFile);
+                $article->setImageFilename($newFilename);
+            }
 
             $em->persist($article);
             $em->flush();
@@ -45,7 +53,7 @@ class ArticleAdminController extends BaseController
      * @Route("/admin/article/{id}/edit", name="admin_article_edit")
      * @IsGranted("MANAGE", subject="article")
      */
-    public function edit(Article $article, Request $request, EntityManagerInterface $em)
+    public function edit(Article $article, Request $request, EntityManagerInterface $em, UploaderHelper $uploaderHelper)
     {
         $form = $this->createForm(ArticleFormType::class, $article, [
             'include_published_at' => true
@@ -55,17 +63,9 @@ class ArticleAdminController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             // dd($form['imageFile']->getData());
             $uploadedFile = $form['imageFile']->getData();
-            
-            if($uploadedFile){
-                $destination = $this->getParameter('kernel.project_dir').'/public/uploads/article_image';
 
-                $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
-    
-                    $uploadedFile->move(
-                        $destination,
-                        $newFilename
-                    );
+            if ($uploadedFile) {
+                $newFilename = $uploaderHelper->uploadArticleImage($uploadedFile);
                 $article->setImageFilename($newFilename);
             }
             

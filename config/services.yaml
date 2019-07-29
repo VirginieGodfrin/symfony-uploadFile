@@ -20,6 +20,7 @@ services:
         bind:
             $markdownLogger: '@monolog.logger.markdown'
             $isDebug: '%kernel.debug%'
+            $uploadsPath: '%kernel.project_dir%/public/uploads'
 
     # custom aliases for autowiring
     Nexy\Slack\Client: '@nexy_slack.client'

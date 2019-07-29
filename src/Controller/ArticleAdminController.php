@@ -72,8 +72,14 @@ class ArticleAdminController extends BaseController
      */
     public function temporaryUploadAction(Request $request)
     {
-        dump($request->getContent());
-        dd($request->files->get('image'));
+        /** @var UploadedFile $uploadedFile */
+        $uploadedFile = $request->files->get('image');
+
+        // This UploadedFile object has a super useful method on it: move()
+        // Give it the destination directory and it'll take care of the rest. 
+        $destination = $this->getParameter('kernel.project_dir').'/public/uploads';
+
+        dd($uploadedFile->move($destination));
     }
 
     /**

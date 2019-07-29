@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Gedmo\Sluggable\Util\Urlizer;
 
 class ArticleAdminController extends BaseController
 {
@@ -79,7 +80,23 @@ class ArticleAdminController extends BaseController
         // Give it the destination directory and it'll take care of the rest. 
         $destination = $this->getParameter('kernel.project_dir').'/public/uploads';
 
-        dd($uploadedFile->move($destination));
+        // $newFilename = uniqid().'-'.$uploadedFile->getClientOriginalName();
+        // The original filename without the file extension
+        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+        // the guessExtension() method looks at the file contents, determines the mime type, and returns the file extension for that
+        $newFilename1 = $originalFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
+        // Urlizer : this comes from the gedmo/doctrine-extensions library
+        // urlize() make file name kleaner
+        $newFilename2 = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
+
+        dump($newFilename1);
+        dump($newFilename2);
+
+        // The move() method has a second argument: the name to give to the file.
+        dd($uploadedFile->move(
+            $destination,
+            $newFilename2
+        ));
     }
 
     /**

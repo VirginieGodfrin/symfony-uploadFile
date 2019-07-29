@@ -2,6 +2,9 @@
     {{ form_row(articleForm.title, {
         label: 'Article title'
     }) }}
+    
+    {{ form_row(articleForm.imageFile) }}
+
     {{ form_row(articleForm.author) }}
     {{ form_row(articleForm.location, {
         attr: {

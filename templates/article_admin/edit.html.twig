@@ -2,13 +2,6 @@
 
 {% block content_body %}
     <h1>Edit the Article! 🚀</h1>
-
-	{# when up use file, enctype="multipart/form-data" is necessary  #}
-    <form method="POST" action="{{ path('upload_test') }}" enctype="multipart/form-data"> 
-    	<input type="file" name="image">
-		<button type="submit" class="btn btn-primary">Upload!</button> 
-	</form>
-
     {{ include('article_admin/_form.html.twig', {
         button_text: 'Update!'
     }) }}

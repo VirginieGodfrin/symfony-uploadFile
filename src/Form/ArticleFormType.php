@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class ArticleFormType extends AbstractType
 {
@@ -48,6 +49,10 @@ class ArticleFormType extends AbstractType
                     'Near a star' => 'star',
                     'Interstellar Space' => 'interstellar_space'
                 ],
+                'required' => false,
+            ])
+            ->add('imageFile', FileType::class,[
+                'mapped' => false,
                 'required' => false,
             ])
         ;

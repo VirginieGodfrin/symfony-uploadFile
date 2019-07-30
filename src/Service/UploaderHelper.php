@@ -6,22 +6,24 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Component\Asset\Context\RequestStackContext;
 use Symfony\Component\HttpFoundation\File\File;
+use League\Flysystem\FilesystemInterface;
 
 class UploaderHelper
 {
     // constante whith folder name
     const ARTICLE_IMAGE = 'article_image';
-	// use dependencie injecton to get parameter from 
-	private $uploadsPath;
+
+    // use Filesystem
+    private $filesystem;
 
     // RequestStackContext is the service that's used internally by the asset() function to determine the subdirectory.
     // and add a / before uploads
     private $requestStackContext;
 
-    public function __construct(string $uploadsPath, RequestStackContext $requestStackContext)
+    public function __construct(FilesystemInterface $publicUploadsFilesystem, RequestStackContext $requestStackContext)
     {
-        $this->uploadsPath = $uploadsPath;
         $this->requestStackContext = $requestStackContext;
+        $this->filesystem = $publicUploadsFilesystem;
     }
 
     // 2 - getPublicPath take a string $path - that will be something like article_image/astronaut.jpeg - 
@@ -39,8 +41,6 @@ class UploaderHelper
     // 5 - and because  uploadArticleImage work now with File obj change the type-hint
 	public function uploadArticleImage(File $file): string
 	{
-		$destination = $this->uploadsPath.'/'.self::ARTICLE_IMAGE;
-
         // $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         // 6 - getClientOriginalName() doest'n exist in File
         // if $file is an instanceof UploadedFile, we can say $originalFilename = $file->getClientOriginalName(). 
@@ -54,9 +54,14 @@ class UploaderHelper
         // 7 - push the pathinfo here
         $newFilename = Urlizer::urlize(pathinfo($originalFilename, PATHINFO_FILENAME)).'-'.uniqid().'.'.$file->guessExtension();
 
-        $file->move(
-            $destination,
-            $newFilename
+        // $file->move(
+        //     $destination,
+        //     $newFilename
+        // );
+        // Instead of $file->move(), use filesystem write methode
+        $this->filesystem->write(
+            self::ARTICLE_IMAGE.'/'.$newFilename,
+            file_get_contents($file->getPathname())
         );
 
         return $newFilename;

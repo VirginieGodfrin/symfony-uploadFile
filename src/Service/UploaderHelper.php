@@ -5,6 +5,7 @@ namespace App\Service;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Component\Asset\Context\RequestStackContext;
+use Symfony\Component\HttpFoundation\File\File;
 
 class UploaderHelper
 {
@@ -35,15 +36,25 @@ class UploaderHelper
             ->getBasePath().'/uploads/'.$path;
     }
 
-	public function uploadArticleImage(UploadedFile $uploadedFile): string
+    // 5 - and because  uploadArticleImage work now with File obj change the type-hint
+	public function uploadArticleImage(File $file): string
 	{
 		$destination = $this->uploadsPath.'/'.self::ARTICLE_IMAGE;
 
-        $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+        // $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+        // 6 - getClientOriginalName() doest'n exist in File
+        // if $file is an instanceof UploadedFile, we can say $originalFilename = $file->getClientOriginalName(). 
+        // Else, set $originalFilename to $file->getFilename() - that's just the name of the file on the filesytem.
+        if ($file instanceof UploadedFile) {
+            $originalFilename = $file->getClientOriginalName();
+        } else {
+            $originalFilename = $file->getFilename();
+        }
 
-        $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
+        // 7 - push the pathinfo here
+        $newFilename = Urlizer::urlize(pathinfo($originalFilename, PATHINFO_FILENAME)).'-'.uniqid().'.'.$file->guessExtension();
 
-        $uploadedFile->move(
+        $file->move(
             $destination,
             $newFilename
         );

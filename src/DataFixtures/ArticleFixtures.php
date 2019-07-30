@@ -7,9 +7,20 @@ use App\Entity\Comment;
 use App\Entity\Tag;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use App\Service\UploaderHelper;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ArticleFixtures extends BaseFixture implements DependentFixtureInterface
 {
+    // 1 make UploaderHelper handy
+    private $uploaderHelper;
+
+    public function __construct(UploaderHelper $uploaderHelper)
+    {
+        $this->uploaderHelper = $uploaderHelper;
+    }
+
     private static $articleTitles = [
         'Why Asteroids Taste Like Bacon',
         'Life on Planet Mercury: Tan, Relaxing and Fabulous',
@@ -54,8 +65,25 @@ EOF
 
             $article->setAuthor($this->getRandomReference('main_users'))
                 ->setHeartCount($this->faker->numberBetween(5, 100))
-                ->setImageFilename($this->faker->randomElement(self::$articleImages))
             ;
+
+            // 2 - create randomImage  to contain the filename
+            // $randomImage = $this->faker->randomElement(self::$articleImages);
+
+            // 7 - the Filesystem 
+            // $fs = new Filesystem();
+            // $targetPath = sys_get_temp_dir().'/'.$randomImage;
+            // $fs->copy(__DIR__.'/images/'.$randomImage, $targetPath, true);
+
+
+            // 3 - Pass to uploadArticleImage (uploaderHelper method) a new File with 2 arg the path and the randomImage
+            // $imageFilename = $this->uploaderHelper
+            //     ->uploadArticleImage(new File($targetPath));
+
+            $imageFilename = $this->fakeUploadImage();
+
+            // 4 - set imageFileName with $imageFilename.
+            $article->setImageFilename($imageFilename);
 
             $tags = $this->getRandomReferences('main_tags', $this->faker->numberBetween(0, 5));
             foreach ($tags as $tag) {
@@ -74,5 +102,15 @@ EOF
             TagFixture::class,
             UserFixture::class,
         ];
+    }
+
+    private function fakeUploadImage(): string
+    {
+        $randomImage = $this->faker->randomElement(self::$articleImages);
+        $fs = new Filesystem();
+        $targetPath = sys_get_temp_dir().'/'.$randomImage;
+        $fs->copy(__DIR__.'/images/'.$randomImage, $targetPath, true);
+        return $this->uploaderHelper
+            ->uploadArticleImage(new File($targetPath));
     }
 }

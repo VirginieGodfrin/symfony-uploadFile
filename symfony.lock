@@ -125,6 +125,9 @@
     "knplabs/knp-time-bundle": {
         "version": "1.9.0"
     },
+    "league/flysystem": {
+        "version": "1.0.53"
+    },
     "liip/imagine-bundle": {
         "version": "1.8",
         "recipe": {
@@ -158,6 +161,18 @@
     },
     "ocramius/proxy-manager": {
         "version": "2.2.2"
+    },
+    "oneup/flysystem-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "0eb87bba411c227da027fe5f7c1dc7954b02f242"
+        },
+        "files": [
+            "config/packages/oneup_flysystem.yaml"
+        ]
     },
     "php-http/cache-plugin": {
         "version": "1.6.0"

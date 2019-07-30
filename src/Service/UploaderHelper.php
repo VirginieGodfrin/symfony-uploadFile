@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Gedmo\Sluggable\Util\Urlizer;
+use Symfony\Component\Asset\Context\RequestStackContext;
 
 class UploaderHelper
 {
@@ -12,9 +13,14 @@ class UploaderHelper
 	// use dependencie injecton to get parameter from 
 	private $uploadsPath;
 
-    public function __construct(string $uploadsPath)
+    // RequestStackContext is the service that's used internally by the asset() function to determine the subdirectory.
+    // and add a / before uploads
+    private $requestStackContext;
+
+    public function __construct(string $uploadsPath, RequestStackContext $requestStackContext)
     {
         $this->uploadsPath = $uploadsPath;
+        $this->requestStackContext = $requestStackContext;
     }
 
     // 2 - getPublicPath take a string $path - that will be something like article_image/astronaut.jpeg - 
@@ -23,7 +29,10 @@ class UploaderHelper
     // If we move to the cloud, we only need to change the URL here! Awesome!
     public function getPublicPath(string $path): string
     {
-        return 'uploads/'.$path;
+        // needed if you deploy under a subdirectory
+        // dump($this->requestStackContext->getBasePath());
+        return $this->requestStackContext
+            ->getBasePath().'/uploads/'.$path;
     }
 
 	public function uploadArticleImage(UploadedFile $uploadedFile): string

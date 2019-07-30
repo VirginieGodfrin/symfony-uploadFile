@@ -44,3 +44,11 @@ services:
         tags:
             - { name: form.type_extension,
                 extended_type: Symfony\Component\Form\Extension\Core\Type\TextareaType }
+
+    # Symfony sees that the RequestStackContext type-hint is not autowireable, 
+    # but it also sees that there is a service in the container - called assets.context - 
+    # that is an instance of this class! (error-message)
+    # This creates a service alias.
+    # there is now a new service that lives in the container called Symfony\Component\Asset\Context\RequestStackContext
+    # and now it's autowireable.
+    Symfony\Component\Asset\Context\RequestStackContext: '@assets.context'

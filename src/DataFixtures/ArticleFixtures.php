@@ -110,7 +110,9 @@ EOF
         $fs = new Filesystem();
         $targetPath = sys_get_temp_dir().'/'.$randomImage;
         $fs->copy(__DIR__.'/images/'.$randomImage, $targetPath, true);
+
+        // here you can add null as second argument, it's the first insert
         return $this->uploaderHelper
-            ->uploadArticleImage(new File($targetPath));
+            ->uploadArticleImage(new File($targetPath), null);
     }
 }

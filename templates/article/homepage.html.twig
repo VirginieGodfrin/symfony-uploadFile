@@ -23,7 +23,8 @@
                     <a href="{{ path('article_show', {slug: article.slug}) }}">
                         
                         {# 3 - now we want to use a new focntion uploaded_asset instead of asset() #}
-                        <img class="article-img" src="{{ uploaded_asset(article.imagePath) }}">
+                        <img class="article-img" 
+                            src="{{ uploaded_asset(article.imagePath)|imagine_filter('squared_thumbnail_small') }}">
                         
                         <div class="article-title d-inline-block pl-3 align-middle">
                             <span>{{ article.title }}</span>

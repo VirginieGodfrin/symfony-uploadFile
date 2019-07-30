@@ -11,6 +11,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use App\Service\UploaderHelper;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
@@ -182,9 +183,14 @@ class Article
         return $this;
     }
 
+    // return the ImageFilename with suffix images/
     public function getImagePath()
     {
-        return 'images/'.$this->getImageFilename();
+        // use constance from service
+        // return 'uploads/'.UploaderHelper::ARTICLE_IMAGE.'/'.$this->getImageFilename();
+        // make it dynamic - 1 remove 'uploads/'
+        // Now getImagePath() returns the path to the image relative to wherever our app decides to store uploads. 
+        return UploaderHelper::ARTICLE_IMAGE.'/'.$this->getImageFilename();
     }
 
     /**

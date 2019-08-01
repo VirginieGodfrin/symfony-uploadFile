@@ -58,7 +58,6 @@ fugiat.
 EOF
             );
 
-            // publish most articles
             if ($this->faker->boolean(70)) {
                 $article->setPublishedAt($this->faker->dateTimeBetween('-100 days', '-1 days'));
             }
@@ -67,22 +66,8 @@ EOF
                 ->setHeartCount($this->faker->numberBetween(5, 100))
             ;
 
-            // 2 - create randomImage  to contain the filename
-            // $randomImage = $this->faker->randomElement(self::$articleImages);
-
-            // 7 - the Filesystem 
-            // $fs = new Filesystem();
-            // $targetPath = sys_get_temp_dir().'/'.$randomImage;
-            // $fs->copy(__DIR__.'/images/'.$randomImage, $targetPath, true);
-
-
-            // 3 - Pass to uploadArticleImage (uploaderHelper method) a new File with 2 arg the path and the randomImage
-            // $imageFilename = $this->uploaderHelper
-            //     ->uploadArticleImage(new File($targetPath));
-
             $imageFilename = $this->fakeUploadImage();
 
-            // 4 - set imageFileName with $imageFilename.
             $article->setImageFilename($imageFilename);
 
             $tags = $this->getRandomReferences('main_tags', $this->faker->numberBetween(0, 5));
@@ -107,11 +92,14 @@ EOF
     private function fakeUploadImage(): string
     {
         $randomImage = $this->faker->randomElement(self::$articleImages);
+
         $fs = new Filesystem();
+
         $targetPath = sys_get_temp_dir().'/'.$randomImage;
+        // We want to copy the original file path into $targetPath.
         $fs->copy(__DIR__.'/images/'.$randomImage, $targetPath, true);
 
-        // here you can add null as second argument, it's the first insert
+        // Here you can add null as second argument, it's the first insert
         return $this->uploaderHelper
             ->uploadArticleImage(new File($targetPath), null);
     }

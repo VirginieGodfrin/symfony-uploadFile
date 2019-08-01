@@ -1,11 +1,18 @@
 # See dos how to configure the bundle: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
 liip_imagine:
+
+    loaders:
+        flysystem_loader:
+            flysystem:
+                filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
+    # default loader to use for all filter sets
+    data_loader: flysystem_loader
+
     # valid drivers options include "gd" or "gmagick" or "imagick"
     driver: "gd"
 
     # define your filter sets under this option
     filter_sets:
-
         # Prototype
         squared_thumbnail_small:
             filters:
@@ -20,3 +27,16 @@ liip_imagine:
                     size:          [500, 500]
                     mode:          outbound
                     allow_upscale: true
+    # The resolver is responsible for saving the thumbnail image back to the filesystem after all of the transformations.
+    # we want LiipImagineBundle write the thumbnail into the public/media directory.
+    # cache_prefix is the subdirectory within the filesystem where the files should be stored 
+    # and root_url is the URL that all the paths will be prefixed with when the image paths are rendered. 
+    resolvers:
+        flysystem_resolver:
+            flysystem:
+                filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
+                root_url:           /uploads
+                cache_prefix:       media/cache
+
+    # default cache resolver for saving thumbnails This tells the bundle to always use this resolver
+    cache: flysystem_resolver

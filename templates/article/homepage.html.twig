@@ -22,9 +22,11 @@
                 <div class="article-container my-1">
                     <a href="{{ path('article_show', {slug: article.slug}) }}">
                         
-                        {# 3 - now we want to use a new focntion uploaded_asset instead of asset() #}
+                        {# the liip_image data-loader is flysystem_loader and his directory is /public/uploads #}
+                        {# The uploaded_asset() function will still be useful if you want the public path to an asset without thumbnailing, but if you're using imagine_filter, passing the short, relative path is all you need. #}
+                        {# So, the "data loader" is responsible for reading the original image. #}
                         <img class="article-img" 
-                            src="{{ uploaded_asset(article.imagePath)|imagine_filter('squared_thumbnail_small') }}">
+                            src="{{ article.imagePath|imagine_filter('squared_thumbnail_small') }}">
                         
                         <div class="article-title d-inline-block pl-3 align-middle">
                             <span>{{ article.title }}</span>

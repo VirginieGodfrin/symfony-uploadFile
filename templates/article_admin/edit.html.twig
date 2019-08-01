@@ -2,9 +2,22 @@
 
 {% block content_body %}
     <h1>Edit the Article! 🚀</h1>
-    {{ include('article_admin/_form.html.twig', {
-        button_text: 'Update!'
-    }) }}
+    <hr>
+    <div class="row">
+        <div class="col-sm-8">
+            <h3>Details</h3>
+			{{ include('article_admin/_form.html.twig', {
+			    button_text: 'Update!'
+			}) }}
+    	</div>
+    	<div class="col-sm-4">
+            <h3>References</h3>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="file" name="reference">
+                <button type="submit" class="btn btn-sm btn-primary">Upload</button>
+            </form>
+        </div>
+
 {% endblock %}
 
 {% block javascripts %}

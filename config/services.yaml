@@ -28,6 +28,7 @@ services:
             $isDebug: '%kernel.debug%'
             $publicUploadsFilesystem: '@oneup_flysystem.public_uploads_filesystem_filesystem'
             $uploadedAssetsBaseUrl: '%uploads_base_url%'
+            $privateUploadsFilesystem: '@oneup_flysystem.private_uploads_filesystem_filesystem'
             # $uploadsPath: '%kernel.project_dir%/public/uploads'
 
     # custom aliases for autowiring

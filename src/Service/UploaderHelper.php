@@ -91,4 +91,11 @@ class UploaderHelper
         return $newFilename;
 	}
 
+    // we don't use $existingFilename because we won't let ArticleReference objects be updated.
+    // To update we delete the old ArticleReference and upload a new one.
+    public function uploadArticleReference(File $file): string
+    {
+        dd($file);
+    }
+
 }

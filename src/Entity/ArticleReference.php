@@ -37,6 +37,11 @@ class ArticleReference
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
+    // Instead of setArticle() use constructor! 
+    public function __construct(Article $article)
+    {
+        $this->article = $article;
+    }
 
     public function getId(): ?int
     {
@@ -82,12 +87,5 @@ class ArticleReference
     public function getArticle(): ?Article
     {
         return $this->article;
-    }
-
-    public function setArticle(?Article $article): self
-    {
-        $this->article = $article;
-
-        return $this;
     }
 }

@@ -16,9 +16,10 @@
             {# when you add |default, it suppresses the error and just returns null if there were any problems, 
             which, for the if statement, is the same as false. #}
              {% if articleForm.vars.data.imageFilename|default %}
-
-                <img src="{{ articleForm.vars.data.imagePath|imagine_filter('squared_thumbnail_small') }}" height="100">
-                
+                {# showing the thumbnail with the twig function  #}
+                <a href="{{ uploaded_asset(articleForm.vars.data.imagePath) }}" target="_blank">
+                    <img src="{{ articleForm.vars.data.imagePath|imagine_filter('squared_thumbnail_small') }}" height="100">
+                </a>
             {% endif %}
         </div>
     </div>

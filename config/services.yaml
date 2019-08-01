@@ -6,6 +6,12 @@
 parameters:
     cache_adapter: cache.adapter.apcu
     locale: 'en'
+    # Directory where we uploade file
+    uploads_dir_name: 'uploads'
+    # the base URL to the uploaded assets.
+    # uploads_base_url: '/%uploads_dir_name%'
+    # Absolute URL  var from env.
+    uploads_base_url: '%env(SITE_BASE_URL)%/%uploads_dir_name%'
 
 services:
     # default configuration for services in *this* file
@@ -21,6 +27,7 @@ services:
             $markdownLogger: '@monolog.logger.markdown'
             $isDebug: '%kernel.debug%'
             $publicUploadsFilesystem: '@oneup_flysystem.public_uploads_filesystem_filesystem'
+            $uploadedAssetsBaseUrl: '%uploads_base_url%'
             # $uploadsPath: '%kernel.project_dir%/public/uploads'
 
     # custom aliases for autowiring

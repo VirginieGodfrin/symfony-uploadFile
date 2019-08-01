@@ -22,11 +22,18 @@ class UploaderHelper
 
     private $logger;
 
-    public function __construct(FilesystemInterface $publicUploadsFilesystem, RequestStackContext $requestStackContext,  LoggerInterface $logger)
+    private $publicAssetBaseUrl;
+
+    public function __construct(
+        FilesystemInterface $publicUploadsFilesystem, 
+        RequestStackContext $requestStackContext,  
+        LoggerInterface $logger, 
+        string $uploadedAssetsBaseUrl)
     {
         $this->requestStackContext = $requestStackContext;
         $this->filesystem = $publicUploadsFilesystem;
         $this->logger = $logger;
+        $this->publicAssetBaseUrl = $uploadedAssetsBaseUrl;
     }
 
     // 2 - getPublicPath take a string $path - that will be something like article_image/astronaut.jpeg - 
@@ -35,7 +42,7 @@ class UploaderHelper
     {
         // needed if you deploy under a subdirectory
         return $this->requestStackContext
-            ->getBasePath().'/uploads/'.$path;
+            ->getBasePath().$this->publicAssetBaseUrl.'/'.$path;
     }
 
 	public function uploadArticleImage(File $file, ?string $existingFilename): string

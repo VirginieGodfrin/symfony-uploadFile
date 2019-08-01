@@ -35,7 +35,7 @@ liip_imagine:
         flysystem_resolver:
             flysystem:
                 filesystem_service: oneup_flysystem.public_uploads_filesystem_filesystem
-                root_url:           /uploads
+                root_url:           '%uploads_base_url%'
                 cache_prefix:       media/cache
 
     # default cache resolver for saving thumbnails This tells the bundle to always use this resolver

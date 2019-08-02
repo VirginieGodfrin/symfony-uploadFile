@@ -11,6 +11,8 @@ use App\Entity\ArticleReference;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 
 class ArticleReferenceAdminController extends BaseController
 {
@@ -92,6 +94,36 @@ class ArticleReferenceAdminController extends BaseController
         $article = $reference->getArticle();
         $this->denyAccessUnlessGranted('MANAGE', $article);
 
-        dd($reference);
+        // We use StreamedResponse obj to return a strem to the user
+        // Add a use statement and bring $reference and $uploaderHelper into the callback's scope so we can use them
+        $response = new StreamedResponse(function() use ($reference, $uploaderHelper) {
+            // write php://output in the stream
+            $outputStream = fopen('php://output', 'wb');
+
+            $fileStream = $uploaderHelper->readStream($reference->getFilePath(), false);
+
+            //  Now we have a "write" stream and a "read" stream, 
+            //  we use a function called stream_copy_to_stream() to...
+            //  Copy $fileStream to $outputStream.
+            stream_copy_to_stream($fileStream, $outputStream);
+        });
+
+        // Set the header response to tell the browser what kind of file is it.
+        $response->headers->set('Content-Type', $reference->getMimeType());
+
+        // force the browser to download the file and to do that we need Content-Disposition.
+        $disposition = HeaderUtils::makeDisposition(
+            // the browser got two way to upload :
+            //      download the file : HeaderUtils::DISPOSITION_ATTACHMENT 
+            //      open it in the browser: HeaderUtils::DISPOSITION_INLINE.
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $reference->getOriginalFilename()
+        );
+
+        // dd($disposition);
+        // and this 'format' to the header
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 }

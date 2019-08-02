@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Article;
+use App\Service\UploaderHelper;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleReferenceRepository")
@@ -87,5 +88,11 @@ class ArticleReference
     public function getArticle(): ?Article
     {
         return $this->article;
+    }
+
+    // same as article getImagePath()
+    public function getFilePath(): string
+    {
+        return UploaderHelper::ARTICLE_REFERENCE.'/'.$this->getFilename();
     }
 }

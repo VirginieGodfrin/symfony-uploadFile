@@ -31,7 +31,7 @@ class ArticleReferenceAdminController extends BaseController
         $uploadedFile = $request->files->get('reference');
 
         // By default, Dropzone uploads a field called file. But in the controller, we're expecting it to be called reference.
-        dump($uploadedFile);
+        // dump($uploadedFile);
 
         $violations = $validator->validate(
             $uploadedFile,
@@ -53,17 +53,9 @@ class ArticleReferenceAdminController extends BaseController
             ]
         );
 
-        // Before upload check violation , if there is one or more forward the route with a flash message  
         if ($violations->count() > 0) {
-            // dd($violations);
-            /** @var ConstraintViolation $violation */
-            $violation = $violations[0];
-
-            $this->addFlash('error', $violation->getMessage());
-
-            return $this->redirectToRoute('admin_article_edit', [
-                'id' => $article->getId(),
-            ]);
+            // return json violation because this controller is an API endpoint
+            return $this->json($violations, 400);
         }
 
         // get the file name with uploadHelper
@@ -82,10 +74,19 @@ class ArticleReferenceAdminController extends BaseController
         $em->persist($articleReference);
         $em->flush();
 
-        // Don't render a template but foward a route
-        return $this->redirectToRoute('admin_article_edit', [
-            'id' => $article->getId(),
-        ]);
+        // And also return a json response
+        // json() serialize articleReference , by default it's serialize all the proprieties that have getter methods
+        // and also the articleReferences propertie's article because: getArticleReferences()
+        // This is why we create an serialisation group
+        // return $this->json($articleReference);
+        return $this->json(
+            $articleReference, // the data
+            201, // the statut code
+            [], // the header
+            [
+                'groups' => ['main'] // the context 
+            ]
+        );
     }
 
 

@@ -41,7 +41,20 @@ $(document).ready(function() {
         // Finally, initialize things with var dropzone = new Dropzone(formElement). 
         // And now we can pass an array of options. The one we need now is paramName. Set it to reference.
         var dropzone = new Dropzone(formElement, {
-            paramName: 'reference'
+            paramName: 'reference',
+
+            // return validation error
+            // Need to customize something in dropzone use init function
+            // mofify error
+            //      Because the real validation message lives on the detail key, 
+            //      we can say: if data.detail, this.emit('error') passing file and the actual error message string: data.detail.
+            init: function() {
+                this.on('error', function(file, data) {
+                    if (data.detail) {
+                        this.emit('error', file, data.detail);
+                    }
+                });
+            }
         });
     }
 });

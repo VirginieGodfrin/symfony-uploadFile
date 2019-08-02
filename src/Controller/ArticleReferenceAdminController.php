@@ -30,6 +30,9 @@ class ArticleReferenceAdminController extends BaseController
     	/** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('reference');
 
+        // By default, Dropzone uploads a field called file. But in the controller, we're expecting it to be called reference.
+        dump($uploadedFile);
+
         $violations = $validator->validate(
             $uploadedFile,
             [

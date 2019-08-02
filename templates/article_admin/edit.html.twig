@@ -28,20 +28,33 @@
 
             <hr>
     
-            <form 
+           {#  <form 
             	action="{{ path('admin_article_add_reference', { id: article.id }) }}" 
             	method="POST" 
             	enctype="multipart/form-data"
             >
                 <input type="file" name="reference">
                 <button type="submit" class="btn btn-sm btn-primary">Upload</button>
+            </form> #}
+            
+            {# dropzone form #}
+            <form 
+                action="{{ path('admin_article_add_reference', { id: article.id }) }}" 
+                method="POST" 
+                enctype="multipart/form-data"
+                class="dropzone js-reference-dropzone"> {# le pointeur #}
             </form>
         </div>
 
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" integrity="sha256-e47xOkXs1JXFbjjpoRr1/LhVcqSzRmGmPqsrUQeVs+g=" crossorigin="anonymous" />
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js" integrity="sha256-cs4thShDfjkqFGk5s2Lxj35sgSRr4MRcyccmi0WKqCM=" crossorigin="anonymous"></script>
     <script src="{{ asset('js/admin_article_form.js') }}"></script>
 {% endblock %}

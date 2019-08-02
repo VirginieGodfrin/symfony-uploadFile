@@ -13,7 +13,7 @@
     	<div class="col-sm-4">
             <h3>References</h3>
 
-            <ul class="list-group small">
+            {# <ul class="list-group small">
                 {% for reference in article.articleReferences %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ reference.originalFilename }}
@@ -24,7 +24,11 @@
                         </span>
                     </li>
                 {% endfor %}
-            </ul>
+            </ul> #}
+            
+            {# Create a list with a new class (js-target) and an URL endpoint 
+            to amke it easy for JavaScript to fetch the references. #}
+            <ul class="list-group small js-reference-list" data-url="{{ path('admin_article_list_references', {id: article.id}) }}"></ul>
 
             <hr>
     

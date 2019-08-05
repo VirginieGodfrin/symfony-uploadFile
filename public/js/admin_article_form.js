@@ -41,6 +41,14 @@ class ReferenceList
         this.$element = $element;
         this.references = [];
         this.render();
+        // This is called a delegate event handler. 
+        // It's handy because it allows us to attach a listener to any .js-reference-delete elements,
+        // even if they're added to the HTML after this line is executed. 
+        this.$element.on('click', '.js-reference-delete', (event) => {
+            // the callBack
+            this.handleReferenceDelete(event);
+        });
+
         $.ajax({
             url: this.$element.data('url')
         }).then(data => {
@@ -57,15 +65,40 @@ class ReferenceList
     render() {
         const itemsHtml = this.references.map(reference => {
             return `
-<li class="list-group-item d-flex justify-content-between align-items-center">
+<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${reference.id}">
     ${reference.originalFilename}
     <span>
-        <a href="/admin/article/references/${reference.id}/download"><span class="fa fa-download"></span></a>
+        <a href="/admin/article/references/${reference.id}/download" class="btn btn-link btn-sm"><span class="fa fa-download" style="vertical-align: middle"></span></a>
+        <button class="js-reference-delete btn btn-link btn-sm"><span class="fa fa-trash"></span></button>
     </span>
 </li>
 `
         });
         this.$element.html(itemsHtml.join(''));
+    }
+
+    handleReferenceDelete(event) {
+        // Start with const $li =. I'm going to use the button that was just clicked to find the <li> element that's around everything - you'll see why in a second. 
+        // So, const $li = $(event.currentTarget) to get the button that was clicked, then .closest('.list-group-item').
+        const $li = $(event.currentTarget).closest('.list-group-item');
+        // the id from li
+        const id = $li.data('id');
+
+        $li.addClass('disabled');
+
+        $.ajax({
+            url: '/admin/article/references/'+id,
+            method: 'DELETE'
+        }).then(() => {
+            // This callback function will be called once for each item in the array. 
+            // If the function returns true, that item will be put into the new references variable. 
+            // If it returns false, it won't be.
+            // The end effect is that we get an identical array, except without the reference that was just deleted.
+            this.references = this.references.filter(reference => {
+                return reference.id !== id;
+            });
+            this.render();
+        });
     }
 }
 

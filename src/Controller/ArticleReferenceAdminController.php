@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Response;
 
 class ArticleReferenceAdminController extends BaseController
 {
@@ -145,5 +146,21 @@ class ArticleReferenceAdminController extends BaseController
                     'groups' => ['main']
                 ]
         );
+    }
+
+    /**
+     * @Route("/admin/article/references/{id}", name="admin_article_delete_reference", methods={"DELETE"})
+     */
+    public function deleteArticleReference(ArticleReference $reference, UploaderHelper $uploaderHelper, EntityManagerInterface $em)
+    {
+        $article = $reference->getArticle();
+        $this->denyAccessUnlessGranted('MANAGE', $article);
+
+        $em->remove($reference);
+        $em->flush();
+
+        $uploaderHelper->deleteFile($reference->getFilePath(), false);
+
+        return new Response(null, 204);
     }
 }

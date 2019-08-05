@@ -16,25 +16,25 @@ class ArticleReference
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups("main")
+     * @Groups({"main", "input"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("main")
+     * @Groups({"main", "input"})
      */
     private $filename;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("main")
+     * @Groups({"main", "input"})
      */
     private $originalFilename;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("main")
+     * @Groups({"main", "input"})
      */
     private $mimeType;
 

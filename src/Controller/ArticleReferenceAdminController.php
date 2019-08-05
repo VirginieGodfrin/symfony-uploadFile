@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ArticleReferenceAdminController extends BaseController
 {
@@ -162,5 +163,46 @@ class ArticleReferenceAdminController extends BaseController
         $uploaderHelper->deleteFile($reference->getFilePath(), false);
 
         return new Response(null, 204);
+    }
+
+    /**
+     * @Route("/admin/article/references/{id}", name="admin_article_update_reference", methods={"PUT"})
+     */
+    public function updateArticleReference(
+        ArticleReference $reference, 
+        UploaderHelper $uploaderHelper, 
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer,
+        Request $request)
+    {
+        $article = $reference->getArticle();
+        $this->denyAccessUnlessGranted('MANAGE', $article);
+
+        // afer zerialise , dezerialise !
+        // By default, deserialize() will always create a new object,but we want it to update an existing object. 
+        // To do that, pass an option called object_to_populate set to $reference.
+        // and don't forget the group 
+        $serializer->deserialize(
+            $request->getContent(),
+            ArticleReference::class,
+            'json',
+            [
+                'object_to_populate' => $reference,
+                'groups' => ['input']
+            ]
+        );
+        // persist() isn't necessary
+        $entityManager->persist($reference);
+        $entityManager->flush();
+
+        // return a json again
+        return $this->json(
+            $reference,
+            200,
+            [],
+            [
+                'groups' => ['main']
+            ]
+        ); 
     }
 }

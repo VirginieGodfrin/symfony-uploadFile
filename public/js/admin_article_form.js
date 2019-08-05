@@ -39,6 +39,11 @@ class ReferenceList
 {
     constructor($element) {
         this.$element = $element;
+        // make element sortable
+        this.sortable = Sortable.create(this.$element[0], {
+            handle: '.drag-handle',
+            animation: 150,
+        });
         this.references = [];
         this.render();
         // This is called a delegate event handler. 
@@ -70,7 +75,8 @@ class ReferenceList
         const itemsHtml = this.references.map(reference => {
             return `
 <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${reference.id}">
-     <input type="text" value="${reference.originalFilename}" class="form-control js-edit-filename" style="width: auto;">
+    <span class="drag-handle fa fa-reorder"></span>
+    <input type="text" value="${reference.originalFilename}" class="form-control js-edit-filename" style="width: auto;">
     <span>
         <a href="/admin/article/references/${reference.id}/download" class="btn btn-link btn-sm"><span class="fa fa-download" style="vertical-align: middle"></span></a>
         <button class="js-reference-delete btn btn-link btn-sm"><span class="fa fa-trash"></span></button>
@@ -113,18 +119,14 @@ class ReferenceList
         const $li = $(event.currentTarget).closest('.list-group-item');
         const id = $li.data('id');
 
-        console.log(id);
-
         const reference = this.references.find(reference => {
             return reference.id === id;
         });
 
-        console.log(reference);
-
         reference.originalFilename = $(event.currentTarget).val();
 
-        console.log(reference);
-
+        // console.log(reference);
+        // Don't forget to retrun a data string
         $.ajax({
             url: '/admin/article/references/'+id,
             method: 'PUT',

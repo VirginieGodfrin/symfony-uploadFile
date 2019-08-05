@@ -235,7 +235,13 @@ html {height:100%}
     }
 }
 
-
+/* Sortable */
+.sortable-ghost {
+    background-color: lightblue;
+}
+.drag-handle {
+    cursor: grab;
+}
 
 /* FOOTER */
 

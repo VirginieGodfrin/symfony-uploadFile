@@ -44,6 +44,11 @@ class ArticleReference
      */
     private $article;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $position = 0;
+
     // Instead of setArticle() use constructor! 
     public function __construct(Article $article)
     {
@@ -100,5 +105,17 @@ class ArticleReference
     public function getFilePath(): string
     {
         return UploaderHelper::ARTICLE_REFERENCE.'/'.$this->getFilename();
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
     }
 }

@@ -16,13 +16,13 @@ class ArticleReference
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"main", "input"})
+     * @Groups("main")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"main", "input"})
+     * @Groups("main")
      */
     private $filename;
 
@@ -34,7 +34,7 @@ class ArticleReference
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"main", "input"})
+     * @Groups("main")
      */
     private $mimeType;
 

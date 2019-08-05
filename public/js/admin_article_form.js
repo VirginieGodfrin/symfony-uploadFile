@@ -48,6 +48,10 @@ class ReferenceList
             // the callBack
             this.handleReferenceDelete(event);
         });
+        // 
+        this.$element.on('blur', '.js-edit-filename', (event) => {
+            this.handleReferenceEditFilename(event);
+        });
 
         $.ajax({
             url: this.$element.data('url')
@@ -66,7 +70,7 @@ class ReferenceList
         const itemsHtml = this.references.map(reference => {
             return `
 <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${reference.id}">
-    ${reference.originalFilename}
+     <input type="text" value="${reference.originalFilename}" class="form-control js-edit-filename" style="width: auto;">
     <span>
         <a href="/admin/article/references/${reference.id}/download" class="btn btn-link btn-sm"><span class="fa fa-download" style="vertical-align: middle"></span></a>
         <button class="js-reference-delete btn btn-link btn-sm"><span class="fa fa-trash"></span></button>
@@ -98,6 +102,33 @@ class ReferenceList
                 return reference.id !== id;
             });
             this.render();
+        });
+    }
+
+    // find the reference that's being updated from inside this.
+    // references, change the originalFilename data on it, 
+    // JSON-encode that entire object, 
+    // and send it to the endpoint.
+    handleReferenceEditFilename(event) {
+        const $li = $(event.currentTarget).closest('.list-group-item');
+        const id = $li.data('id');
+
+        console.log(id);
+
+        const reference = this.references.find(reference => {
+            return reference.id === id;
+        });
+
+        console.log(reference);
+
+        reference.originalFilename = $(event.currentTarget).val();
+
+        console.log(reference);
+
+        $.ajax({
+            url: '/admin/article/references/'+id,
+            method: 'PUT',
+            data: JSON.stringify(reference)
         });
     }
 }

@@ -195,4 +195,39 @@ class ArticleReferenceAdminController extends BaseController
             ]
         );
     }
+
+    // Inside the method, here's the plan: our JavaScript will send a JSON body containing an array of the ids in the right order. This array exactly. Add the Request argument so we can get read that data and the EntityManagerInterface so we can save stuff.
+    /**
+     * @Route("/admin/article/{id}/references/reorder", methods="POST", name="admin_article_reorder_references")
+     * @IsGranted("MANAGE", subject="article")
+     */
+    public function reorderArticleReferences(Article $article, Request $request, EntityManagerInterface $em)
+    {
+        // Decode the JSON, it gives us an associative array.
+        $orderedIds = json_decode($request->getContent(), true);
+
+        if ($orderedIds === null) {
+            return $this->json(['detail' => 'Invalid body'], 400);
+        }
+
+        // The flip: The original array is a map from the position to the id - the keys are 0, 1, 2, 3 and so on. 
+        // After the flip, we have a very handy array: the key is the id and the value is its new position.
+        // from (position)=>(id) to (id)=>(position)
+        $orderedIds = array_flip($orderedIds);
+
+        foreach ($article->getArticleReferences() as $reference) {
+            $reference->setPosition($orderedIds[$reference->getId()]);
+        }
+
+        $em->flush();
+
+        return $this->json(
+            $article->getArticleReferences(),
+            200,
+            [],
+            [
+                'groups' => ['main']
+            ]
+        );
+    }
 }

@@ -1,4 +1,7 @@
 {
+    "aws/aws-sdk-php": {
+        "version": "3.108.4"
+    },
     "behat/transliterator": {
         "version": "v1.2.0"
     },
@@ -146,6 +149,9 @@
     },
     "monolog/monolog": {
         "version": "1.24.0"
+    },
+    "mtdowling/jmespath.php": {
+        "version": "2.4.0"
     },
     "nexylan/slack": {
         "version": "v2.1.0"
